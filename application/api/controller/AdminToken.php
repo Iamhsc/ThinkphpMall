@@ -22,7 +22,7 @@ class AdminToken
      */
     public function getToken($info)
     {
-        $key = config('jwt.key');  //这里是自定义的一个随机字串，应该写在config文件中的，解密时也会用，相当    于加密中常用的 盐  salt
+        $key = config('jwt.key');  //这里是自定义的一个随机字串，应该写在config文件中的，解密时也会用，
         $token = [
             "iss" => "",                      //签发者 可以为空
             "aud" => "",                      //面象的用户，可以为空
