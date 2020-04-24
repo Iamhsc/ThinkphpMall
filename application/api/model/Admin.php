@@ -61,7 +61,7 @@ class Admin extends Model
             unset($data['username']);
         }
 
-        if (!$this->update($data, ['id' => $id], 'role_id,status,admin_name,nickname,mobile,email')) {
+        if (!$this->update($data, ['id' => $id])) {
             return [0,'更新失败'];
         }
     }

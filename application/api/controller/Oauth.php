@@ -50,7 +50,7 @@ class Oauth
             $clientInfo['access_token'] = $authorizationInfo[1];
             return $clientInfo;
         } catch (Exception $e) {
-            return self::returnMsg(401,'Invalid authorization credentials',Request::header(''));
+            return self::returnMsg(0,'Invalid authorization credentials',Request::header(''));
         }
     }
 
@@ -62,10 +62,10 @@ class Oauth
     public static function certification($data = []){
         $getCacheAccessToken = Cache::get(self::$accessTokenPrefix . $data['access_token']);  //获取缓存access_token
         if(!$getCacheAccessToken){
-            return self::returnMsg(401,'fail',"access_token不存在或为空");
+            return self::returnMsg(0,'fail',"access_token不存在或为空");
         }
         if($getCacheAccessToken['client']['appid'] !== $data['appid']){
-            return self::returnMsg(401,'fail',"appid错误");  //appid与缓存中的appid不匹配
+            return self::returnMsg(0,'fail',"appid错误");  //appid与缓存中的appid不匹配
         }
         return $data;
     }

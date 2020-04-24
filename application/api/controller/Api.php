@@ -53,12 +53,14 @@ class Api
             $check = $adminToken->checkToken();           //检查token是否正确
             if (!$check['code'])                          //如果token不正确
                 self::returnMsg(401, $check['data']);
+
             $this->userInfo = $check['data'];             //管理员信息
-            $this->uid = $check['data']['uid'];           //管理员id
-
+            $this->uid = $check['data']->uid;           //管理员id
             $menuInfo = Menu::getMenuInfo($this->request);      //当前访问节点id
-
-            if (Role::checkAuth($this->uid, $menuInfo['id']) === false) self::returnMsg(401, '访问权限不足:'.$menuInfo['title']);
+            if ($menuInfo['url'] != 'auth/index'){
+                if (!Role::checkAuth($this->uid, $menuInfo['menu']['id']))
+                    self::returnMsg(0, '访问权限不足:'.$menuInfo['menu']['title']);
+            }
         }
     }
 

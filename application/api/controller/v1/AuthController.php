@@ -4,10 +4,13 @@ namespace app\api\controller\v1;
 
 use app\api\controller\Api;
 use app\api\model\Menu;
+use app\api\model\RoleAuth;
+use think\Exception;
 use think\Request;
 
 class AuthController extends Api
 {
+//    protected $noAuth = ['index'];
     /**
      *
      * 获取菜单
@@ -19,49 +22,33 @@ class AuthController extends Api
     }
 
     /**
-     * 保存新建的资源
-     *
-     * @param  \think\Request  $request
-     * @return \think\Response
-     */
-    public function save(Request $request)
-    {
-        //
-    }
-
-    /**
-     * 显示指定的资源
-     *
-     * @param  int  $id
-     * @return \think\Response
+     * 获取指定角色权限
+     * @param $id
      */
     public function read($id)
     {
-        $auth = [];
-        $auth = Menu::getRoleAuthChildMenu($id);
-        $this->returnMsg(200, '获取成功', $auth);
+        try{
+            $auth = Menu::getRoleAuthChildMenu($id);
+            $this->returnMsg(200, '获取成功', $auth);
+        }
+        catch (\Exception $e){
+            $this->returnMsg(00, '获取失败', $e);
+        }
     }
 
-    /**
-     * 保存更新的资源
-     *
-     * @param  \think\Request  $request
-     * @param  int  $id
-     * @return \think\Response
-     */
+
     public function update(Request $request, $id)
     {
-        //
-    }
-
-    /**
-     * 删除指定资源
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function delete($id)
-    {
-        //
+        $rids= $request->post();
+        try{
+            RoleAuth::where(['role_id'=>$id])->delete();
+            foreach ($rids['rids'] as $item) {
+                if (!RoleAuth::create(['role_id'=>$id,'auth_id'=>$item]))
+                    $this->returnMsg(0,'分配失败');
+            }
+            $this->returnMsg(200, '分配成功');
+        }catch (\Exception $e){
+            $this->returnMsg(0,'分配失败',$e);
+        }
     }
 }

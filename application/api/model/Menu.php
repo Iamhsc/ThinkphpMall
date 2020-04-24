@@ -2,6 +2,8 @@
 
 namespace app\api\model;
 
+use app\api\controller\Send;
+use think\Exception;
 use think\facade\Cache;
 use think\Model;
 use think\Request;
@@ -47,7 +49,7 @@ class Menu extends Model
             }
             foreach ($menus as $key => $value) {
                 if ($value['pid'] == $pid) {
-                    $value['selected'] = $role_id == 1 ? true : in_array($value['id'],Role::getRoleAuth($role_id)) ? true : false;
+                    $value['selected'] = $role_id == 1 ? true : in_array($value['id'], Role::getRoleAuth($role_id)) ? true : false;
 
                     $value['children'] = self::getRoleAuthChildMenu($role_id, $value['id'], $level + 1, $menus);
                     // 如果不再有子节点，删除掉children
@@ -72,9 +74,6 @@ class Menu extends Model
     public static function getAuthChildMenu($uid, $pid = 0, $level = 0, $menus = [])
     {
         $menuTrees = [];
-//        if ($level == 0) {
-//            $menuTrees = Cache::store('redis')->get('admin_auth_child_menu_'.$uid);
-//        }
         if (empty($menuTrees)) {
             if (empty($menus)) {
                 $map['status'] = 1;
@@ -85,7 +84,7 @@ class Menu extends Model
             foreach ($menus as $key => $value) {
                 if ($value['pid'] == $pid) {
                     if (!Role::checkAuth($uid, $value['id'])) {
-                        unset($menus[$key]);
+//                        unset($menus[$key]);
                         continue;
                     }
                     unset($menus[$key], $value['pid']);
@@ -97,7 +96,6 @@ class Menu extends Model
                     $menuTrees[] = $value;
                 }
             }
-//            Cache::store('redis')->set('admin_auth_child_menu_'.$uid, $menuTrees, 0);
         }
         return $menuTrees;
     }
@@ -115,9 +113,6 @@ class Menu extends Model
     public static function getAllChildMenu($pid = 0, $level = 0, $menus = [])
     {
         $menuTrees = [];
-//        if ($level == 0) {
-//            $menuTrees = Cache::store('redis')->get('admin_all_child_menu_');
-//        }
         if (empty($menuTrees)) {
             if (empty($menus)) {
                 $menus = self::order('sort asc,id asc')->select()->toArray();
@@ -125,7 +120,6 @@ class Menu extends Model
             }
             foreach ($menus as $key => $value) {
                 if ($value['pid'] == $pid) {
-//                    unset($menus[$key]);
                     $value['children'] = self::getAllChildMenu($value['id'], $level + 1, $menus);
                     // 如果不再有子节点，删除掉children
                     if (!$value['children']) {
@@ -134,28 +128,26 @@ class Menu extends Model
                     $menuTrees[] = $value;
                 }
             }
-//            Cache::store('redis')->set('admin_all_child_menu_', $menuTrees, 0);
         }
         return $menuTrees;
     }
 
-
     /**
      * 获取当前访问节点id
      * @param Request $request
-     * @return mixed
+     * @return array|\PDOStatement|string|Model|null
      */
     public static function getMenuInfo(Request $request)
     {
         $controller = explode('.', $request->controller())[1];  //拿到controller
         $action = $request->action();                                    //拿到action
-        $cache_key = md5($controller . '_' . $action . '_info');
-        $menuInfo = Cache::store('redis')->get($cache_key);
-        if (empty($menuInfo)) {
-            $map = ['ctrl' => $controller, 'action' => $action];
-            $menuInfo = db('menu')->where($map)->field('id,title')->find();
-            Cache::store('redis')->set($cache_key, $menuInfo, 0);
+        $map = ['ctrl' => $controller, 'action' => $action];
+        $menuInfo['url'] = $controller . '/' .$action;
+        try{
+            $menuInfo['menu'] = Menu::where($map)->field('id,title')->find();
+            return $menuInfo;
+        }catch (\Exception $e){
+            return [];
         }
-        return $menuInfo;
     }
 }

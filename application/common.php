@@ -20,3 +20,24 @@ function get_client_ip($type = 0, $adv = false)
 {
     return request()->ip($type, $adv);
 }
+
+/**
+ * @return string
+ * @throws Exception
+ */
+function getLocationByIp()
+{
+    $ip2region = new \Ip2Region();
+    $info = $ip2region->btreeSearch(request()->ip(0, false));
+
+    $info = explode('|', $info['region']);
+
+    $address = '';
+    foreach($info as $vo) {
+        if('0' !== $vo) {
+            $address .= $vo . '-';
+        }
+    }
+
+    return rtrim($address, '-');
+}

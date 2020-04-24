@@ -3,13 +3,17 @@
 namespace app\api\controller\v1;
 
 use app\api\controller\Api;
+use app\api\model\Admin;
 use app\api\model\Role;
+use app\api\model\RoleAuth;
 use think\exception\DbException;
 use think\Request;
 use think\Validate;
 
 class RoleController extends Api
 {
+
+    protected $noAuth = ['index'];
     /**
      * 获取角色列表
      */
@@ -27,7 +31,7 @@ class RoleController extends Api
             $data['count'] = Role::where($where)->count('id');
             $this->returnMsg(200, '角色列表完成', $data);
         } catch (DbException $e) {
-            $this->returnMsg(400, $e->getMessage());
+            $this->returnMsg(0, $e->getMessage());
         }
     }
 
@@ -42,13 +46,14 @@ class RoleController extends Api
             $adminInfo = Role::get($id);
             $this->returnMsg(200, '获取数据成功', $adminInfo);
         } catch (DbException $e) {
-            $this->returnMsg(400, $e->getMessage());
+            $this->returnMsg(0, $e->getMessage());
         }
     }
 
     /**
      * 新建角色
      * @param Request $request
+     * @throws \think\exception\PDOException
      */
     public function save(Request $request)
     {
@@ -59,10 +64,23 @@ class RoleController extends Api
         if (isset($data['id'])){
             $this->update($request,$data['id']);
         }
+        $model = new Role();
+        $model->startTrans();
 
-        if (!Role::create($data)) {
-            $this->returnMsg(0, '添加角色失败');
+        if (!$model->save($data)) {
+            $this->returnMsg(0, '添加角色失败1');
         }
+        $authModel = new RoleAuth();
+        $authModel->startTrans();
+        foreach ([1,2,3] as $item) {
+            if (!RoleAuth::create(['role_id'=>$model->id,'auth_id'=>$item])) {
+                $model->rollback();
+                $authModel->rollback();
+                $this->returnMsg(0, '添加角色失败2');
+            }
+        }
+        $model->commit();
+        $authModel->commit();
 
         $this->returnMsg(200, '添加角色成功');
     }
@@ -87,12 +105,19 @@ class RoleController extends Api
     public function delete($id)
     {
         try {
-            if (Role::where(['id' => $id])->delete()) {
-                $this->returnMsg('200', '删除成功');
+            if ($id == 1){
+                $this->returnMsg(0, '不能删除超级管理员');
             }
-            $this->returnMsg('400', '删除失败');
+            if (Admin::where(['role_id'=>$id])->count('id')>0)
+                $this->returnMsg(0, '必须先删除该角色下所有管理员');
+
+            //删除关联权限后删除角色
+            if (RoleAuth::where(['role_id'=>$id])->delete() && Role::where(['id' => $id])->delete()) {
+                $this->returnMsg(200, '删除成功');
+            }
+            $this->returnMsg(0, '删除失败');
         } catch (\Exception $e) {
-            $this->returnMsg('400', '删除失败' . $e->getMessage());
+            $this->returnMsg(0, '删除失败' . $e->getMessage());
         }
     }
 }
