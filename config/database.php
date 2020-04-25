@@ -15,13 +15,13 @@ return [
     // 服务器地址
     'hostname'        => '192.168.33.11',
     // 数据库名
-    'database'        => '',
+    'database'        => 'print',
     // 用户名
-    'username'        => 'root',
+    'username'        => 'dev',
     // 密码
-    'password'        => '',
+    'password'        => 'dev',
     // 端口
-    'hostport'        => '',
+    'hostport'        => '3306',
     // 连接dsn
     'dsn'             => '',
     // 数据库连接参数
