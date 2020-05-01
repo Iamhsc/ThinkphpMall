@@ -70,6 +70,9 @@ class AdminController extends Api
 
         $validate = new Validate(['mobile' => 'require', 'password' => 'require', 'role_id' => 'require']);
         $validate->message(['mobile.require' => '请输入手机号!', 'password.require' => '请输入密码!', 'role_id.require' => '请设置角色']);
+        if (!$validate->check($data)) {
+            $this->returnMsg(0, $validate->getError());
+        }
 
         $data['admin_password'] = trim(md5($data['password']));
 

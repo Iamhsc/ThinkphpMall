@@ -60,6 +60,9 @@ class RoleController extends Api
         $data = $request->post();
         $validate = new Validate(['name' => 'require']);
         $validate->message(['name.require' => '请输入角色名!']);
+        if (!$validate->check($data)) {
+            $this->returnMsg(0, $validate->getError());
+        }
 
         if (isset($data['id'])){
             $this->update($request,$data['id']);
