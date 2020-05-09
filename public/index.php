@@ -15,5 +15,10 @@ namespace think;
 // 加载基础文件
 require __DIR__ . '/../thinkphp/base.php';
 
+// 跨域处理
+header('Access-Control-Allow-Origin:*');
+header('Access-Control-Allow-Methods:*');
+header('Access-Control-Allow-Headers:*');
+
 // 执行应用并响应
-Container::get('app')->run()->send();
+Container::get('app')->bind('index')->run()->send();

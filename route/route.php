@@ -15,18 +15,16 @@ Route::allowCrossDomain();//解决跨域
 
 //一般路由规则，访问的url为：v1/address/1,对应的文件为Address类下的read方法
 
-Route::resource('admin/:version/admin','api/:version.admin');       //管理员管理路由
-Route::resource('admin/:version/role','api/:version.role');        //角色管理路由
-Route::resource('admin/:version/menu','api/:version.menu');       //菜单管理路由
-Route::resource('admin/:version/auth','api/:version.auth');       //权限管理路由
-Route::resource('admin/:version/log','api/:version.log');       //日志管理路由
-Route::resource('admin/:version/index','api/:version.index');       //index路由
-Route::resource('admin/:version/user','api/:version.user');       //用户管理路由
-Route::resource('admin/:version/merchant','api/:version.merchant');       //商户管理路由
+Route::resource('admin/:version/admin','admin/:version.admin');       //管理员管理路由
+Route::resource('admin/:version/role','admin/:version.role');        //角色管理路由
+Route::resource('admin/:version/menu','admin/:version.menu');       //菜单管理路由
+Route::resource('admin/:version/auth','admin/:version.auth');       //权限管理路由
+Route::resource('admin/:version/log','admin/:version.log');       //日志管理路由
+Route::resource('admin/:version/index','admin/:version.index');       //index路由
+Route::resource('admin/:version/user','admin/:version.user');       //用户管理路由
+Route::resource('admin/:version/merchant','admin/:version.merchant');       //商户管理路由
 
-Route::post('admin/:version/admin/login','api/:version.admin/login');//登录路由
-Route::get('admin/:version/cache/clear','api/:version.cache/clear');//缓存清除
+Route::post('admin/:version/admin/login','admin/:version.admin/login');//登录路由
+Route::get('admin/:version/cache/clear','admin/:version.cache/clear');//缓存清除
 
-//生成access_token，post访问Token类下的token方法
-Route::post(':version/token','api/:version.token/token');
-Route::post(':version/token/refresh','api/:version.token/refresh');
+
