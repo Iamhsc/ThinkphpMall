@@ -21,4 +21,4 @@ header('Access-Control-Allow-Methods:*');
 header('Access-Control-Allow-Headers:*');
 
 // 执行应用并响应
-Container::get('app')->bind('index')->run()->send();
+Container::get('app')->run()->send();

@@ -21,7 +21,7 @@ class Upload extends Model
      */
     public function upload($file, $uid)
     {
-        $info = $file->validate(['ext' => 'docx,pdf'])
+        $info = $file->validate(['ext' => 'docx,pdf,jpg,png'])
             ->rule('uniqid')
             ->move('../public/uploads/printFile/' . $uid);
         if ($info) {
@@ -53,6 +53,8 @@ class Upload extends Model
             return $this->count_pdf_pages($filename);
         }elseif ($str[1] == 'docx'){
             return $this->get_num_pages_docx($filename);
+        }elseif ($str[1] == 'jpg'||$str[1] == 'png'){
+            return 1;
         }
         return false;
     }

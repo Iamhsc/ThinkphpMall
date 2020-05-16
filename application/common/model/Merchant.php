@@ -49,7 +49,7 @@ class Merchant extends Model
                     return ['code' => 0, 'msg' => '该手机号码已存在'];
             }
             if (isset($data['username'])) {
-                $data['m_login_name_name'] = $data['username'];
+                $data['m_login_name'] = $data['username'];
                 unset($data['username']);
             }
 

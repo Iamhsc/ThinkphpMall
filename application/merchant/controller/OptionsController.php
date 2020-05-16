@@ -29,10 +29,10 @@ class OptionsController extends BaseController
         $this->returnMsg(0, '失败');
     }
 
-    public function read($id)
+    public function read()
     {
         $opt = new Options();
-        $op = $opt->where('mid', 'eq', $id)->field('options')->find();
+        $op = $opt->where('mid', 'eq', $this->mid)->field('options')->find();
         $this->returnMsg(200, '成功', $op);
     }
 }

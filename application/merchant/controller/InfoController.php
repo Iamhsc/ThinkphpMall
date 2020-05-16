@@ -37,6 +37,10 @@ class InfoController extends BaseController
     public function update(Request $request)
     {
         $data = $request->param();
+        $mname = $this->merchantInfo->username;
+        if (!empty($mname)&&$mname!=$data['username']){
+            return json(['code'=>0,'msg'=>'用户名不能更改']);
+        }
         $data['m_name'] = $data['name'];
         unset($data['name']);
         $user = new Merchant();

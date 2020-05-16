@@ -12,7 +12,7 @@ Route::get('merchant/order','merchant/order/index');
 Route::get('merchant/order_details/:id','merchant/order/read');
 Route::put('merchant/order/:id','merchant/order/update');
 Route::post('merchant/option','merchant/options/save'); //上传文件
-Route::get('merchant/option/:id','merchant/options/read'); //上传文件
+Route::get('merchant/option','merchant/options/read'); //上传文件
 //Route::get('print','index/print');
 //Route::get('print','index/print');
 
